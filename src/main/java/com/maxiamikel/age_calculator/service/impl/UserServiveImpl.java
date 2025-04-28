@@ -48,7 +48,7 @@ public class UserServiveImpl implements UserServive {
     @Override
     public AgeInfoResponseDTO getUserInfo(AgeInfoRequestDTO request) {
 
-        User user = findByEmail(request.getEmail());
+        User user = findUserByEmailOrUserId(request.getCriteria());
         if (user != null) {
 
             LocalDate today = LocalDate.now();
@@ -66,10 +66,17 @@ public class UserServiveImpl implements UserServive {
 
             return response;
         }
-        throw new RuntimeException("No reccord found under this email: " + request.getEmail());
+        throw new RuntimeException("No reccord found under this email: " + request.getCriteria());
     }
 
     private User findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
+
+    private User findUserByEmailOrUserId(String criteria) {
+        return userRepository.findByEmail(criteria)
+                .or(() -> userRepository.findByUserId(criteria))
+                .orElseThrow(() -> new RuntimeException("User could not be found"));
+    }
+
 }

@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AgeInfoRequestDTO {
 
-    private String email;
+    private String criteria;
 }

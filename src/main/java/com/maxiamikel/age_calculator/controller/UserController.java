@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.maxiamikel.age_calculator.dto.AgeInfoRequestDTO;
 import com.maxiamikel.age_calculator.dto.AgeInfoResponseDTO;
 import com.maxiamikel.age_calculator.dto.UserCreateRequestDTO;
 import com.maxiamikel.age_calculator.dto.UserCreatedResponseDTO;
@@ -30,8 +30,8 @@ public class UserController {
     }
 
     @GetMapping("/infos")
-    public ResponseEntity<AgeInfoResponseDTO> getUserInfo(@RequestBody AgeInfoRequestDTO request) {
-        var user = userServive.getUserInfo(request);
+    public ResponseEntity<AgeInfoResponseDTO> getUserInfo(@RequestParam("criteria") String criteria) {
+        var user = userServive.getUserInfo(criteria);
         return new ResponseEntity<AgeInfoResponseDTO>(user, HttpStatus.OK);
     }
 

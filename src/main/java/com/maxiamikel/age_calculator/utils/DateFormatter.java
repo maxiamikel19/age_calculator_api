@@ -7,8 +7,6 @@ import java.util.List;
 
 import com.maxiamikel.age_calculator.exception.InvalidInputDateException;
 
-import jakarta.validation.ConstraintViolationException;
-
 public class DateFormatter {
 
     private static List<DateTimeFormatter> DATE_FORMAT = Arrays.asList(

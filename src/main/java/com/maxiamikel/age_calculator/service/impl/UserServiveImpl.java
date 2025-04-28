@@ -6,7 +6,6 @@ import java.time.Period;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.maxiamikel.age_calculator.dto.AgeInfoRequestDTO;
 import com.maxiamikel.age_calculator.dto.AgeInfoResponseDTO;
 import com.maxiamikel.age_calculator.dto.UserCreateRequestDTO;
 import com.maxiamikel.age_calculator.dto.UserCreatedResponseDTO;
@@ -49,9 +48,9 @@ public class UserServiveImpl implements UserServive {
     }
 
     @Override
-    public AgeInfoResponseDTO getUserInfo(AgeInfoRequestDTO request) {
+    public AgeInfoResponseDTO getUserInfo(String criteria) {
 
-        User user = findUserByEmailOrUserId(request.getCriteria());
+        User user = findUserByEmailOrUserId(criteria);
 
         LocalDate today = LocalDate.now();
         Period period = Period.between(LocalDate.parse(user.getBurthDate()), today);

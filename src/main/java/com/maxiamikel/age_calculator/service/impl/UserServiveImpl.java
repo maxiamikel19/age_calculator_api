@@ -1,10 +1,13 @@
 package com.maxiamikel.age_calculator.service.impl;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.maxiamikel.age_calculator.dto.AgeInfoRequestDTO;
+import com.maxiamikel.age_calculator.dto.AgeInfoResponseDTO;
 import com.maxiamikel.age_calculator.dto.UserCreateRequestDTO;
 import com.maxiamikel.age_calculator.dto.UserCreatedResponseDTO;
 import com.maxiamikel.age_calculator.mapper.UserMapper;
@@ -42,8 +45,31 @@ public class UserServiveImpl implements UserServive {
         return UserMapper.mapToUserCreateResponseDto(newUser);
     }
 
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+    @Override
+    public AgeInfoResponseDTO getUserInfo(AgeInfoRequestDTO request) {
+
+        User user = findByEmail(request.getEmail());
+        if (user != null) {
+
+            LocalDate today = LocalDate.now();
+            Period period = Period.between(LocalDate.parse(user.getBurthDate()), today);
+
+            AgeInfoResponseDTO response = new AgeInfoResponseDTO();
+            response.setUserId(user.getUserId());
+            response.setName(user.getName());
+            response.setEmail(user.getEmail());
+            response.setBurthDate(user.getBurthDate());
+            response.setGender(user.getGender());
+            response.setAgeYear(period.getYears());
+            response.setAgeMonths(period.getMonths());
+            response.setAgeDays(period.getDays());
+
+            return response;
+        }
+        throw new RuntimeException("No reccord found under this email: " + request.getEmail());
     }
 
+    private User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
 }

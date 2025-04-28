@@ -10,6 +10,8 @@ import com.maxiamikel.age_calculator.dto.AgeInfoRequestDTO;
 import com.maxiamikel.age_calculator.dto.AgeInfoResponseDTO;
 import com.maxiamikel.age_calculator.dto.UserCreateRequestDTO;
 import com.maxiamikel.age_calculator.dto.UserCreatedResponseDTO;
+import com.maxiamikel.age_calculator.exception.EntityAlereadyExistException;
+import com.maxiamikel.age_calculator.exception.EntityNotFoundException;
 import com.maxiamikel.age_calculator.mapper.UserMapper;
 import com.maxiamikel.age_calculator.model.User;
 import com.maxiamikel.age_calculator.repository.UserRepository;
@@ -26,7 +28,8 @@ public class UserServiveImpl implements UserServive {
     public UserCreatedResponseDTO createNewUser(UserCreateRequestDTO request) {
 
         if (findByEmail(request.getEmail()) != null) {
-            throw new RuntimeException("This email: " + request.getEmail() + " has been taken by another user");
+            throw new EntityAlereadyExistException(
+                    "This email: " + request.getEmail() + " has been taken by another user");
         }
 
         String burthDateFormatted = DateFormatter.formatInputDate(request.getBurthDate());
@@ -49,24 +52,22 @@ public class UserServiveImpl implements UserServive {
     public AgeInfoResponseDTO getUserInfo(AgeInfoRequestDTO request) {
 
         User user = findUserByEmailOrUserId(request.getCriteria());
-        if (user != null) {
 
-            LocalDate today = LocalDate.now();
-            Period period = Period.between(LocalDate.parse(user.getBurthDate()), today);
+        LocalDate today = LocalDate.now();
+        Period period = Period.between(LocalDate.parse(user.getBurthDate()), today);
 
-            AgeInfoResponseDTO response = new AgeInfoResponseDTO();
-            response.setUserId(user.getUserId());
-            response.setName(user.getName());
-            response.setEmail(user.getEmail());
-            response.setBurthDate(user.getBurthDate());
-            response.setGender(user.getGender());
-            response.setAgeYear(period.getYears());
-            response.setAgeMonths(period.getMonths());
-            response.setAgeDays(period.getDays());
+        AgeInfoResponseDTO response = new AgeInfoResponseDTO();
+        response.setUserId(user.getUserId());
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+        response.setBurthDate(user.getBurthDate());
+        response.setGender(user.getGender());
+        response.setAgeYear(period.getYears());
+        response.setAgeMonths(period.getMonths());
+        response.setAgeDays(period.getDays());
 
-            return response;
-        }
-        throw new RuntimeException("No reccord found under this email: " + request.getCriteria());
+        return response;
+
     }
 
     private User findByEmail(String email) {
@@ -76,7 +77,8 @@ public class UserServiveImpl implements UserServive {
     private User findUserByEmailOrUserId(String criteria) {
         return userRepository.findByEmail(criteria)
                 .or(() -> userRepository.findByUserId(criteria))
-                .orElseThrow(() -> new RuntimeException("User could not be found"));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No reccord found under this email: " + criteria));
     }
 
 }

@@ -5,6 +5,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
+import com.maxiamikel.age_calculator.exception.InvalidInputDateException;
+
+import jakarta.validation.ConstraintViolationException;
+
 public class DateFormatter {
 
     private static List<DateTimeFormatter> DATE_FORMAT = Arrays.asList(
@@ -22,6 +26,6 @@ public class DateFormatter {
 
             }
         }
-        throw new RuntimeException("Invalid input date format");
+        throw new InvalidInputDateException("Invalid input date format");
     }
 }
